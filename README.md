@@ -1,7 +1,7 @@
 # Showdown  ![umbreon](https://play.pokemonshowdown.com/sprites/xyani/umbreon.gif)
 A Pokémon battle-bot that can play battles on [Pokemon Showdown](https://pokemonshowdown.com/).
 
-The bot can play single battles in generations 3 through 8.
+The bot can play single battles in generations 3 through 9.
 
 ![badge](https://github.com/pmariglia/showdown/actions/workflows/pythonapp.yml/badge.svg)
 
@@ -23,7 +23,7 @@ The configurations available are:
 | **`WEBSOCKET_URI`** | string | yes | The address to use to connect to the Pokemon Showdown websocket |
 | **`PS_USERNAME`** | string | yes | Pokemon Showdown username |
 | **`PS_PASSWORD`** | string | yes | Pokemon Showdown password  |
-| **`BOT_MODE`** | string | yes | The mode the the bot will operate in. Options are `CHALLENGE_USER`, `SEARCH_LADDER`, or `ACCEPT_CHALLENGE` |
+| **`BOT_MODE`** | string | yes | The mode the the bot will operate in. Options in the original repo are `CHALLENGE_USER`, `SEARCH_LADDER`, or `ACCEPT_CHALLENGE`. However, after forking, only 'ACCEPT_CHALLENGE' is supported. Other options may fail unexpectedly. |
 | **`POKEMON_MODE`** | string | yes | The type of game this bot will play: `gen8ou`, `gen7randombattle`, etc. |
 | **`USER_TO_CHALLENGE`** | string | only if `BOT_MODE` is `CHALLENGE_USER` | If `BOT_MODE` is `CHALLENGE_USER`, this is the name of the user you want your bot to challenge |
 | **`RUN_COUNT`** | int | no | The number of games the bot will play before quitting |
