@@ -27,17 +27,18 @@ def battle_is_finished(battle_tag, msg):
     )
 
 
-async def async_pick_move(battle):
+async def async_pick_move(battle, ps_websocket_client):
     battle_copy = deepcopy(battle)
     if battle_copy.request_json:
         battle_copy.user.from_json(battle_copy.request_json)
 
     loop = asyncio.get_event_loop()
     with concurrent.futures.ThreadPoolExecutor() as pool:
-        best_move = await loop.run_in_executor(
+        best_move, decision_string = await loop.run_in_executor(
             pool, battle_copy.find_best_move
         )
     choice = best_move[0]
+    await ps_websocket_client.send_message(battle.battle_tag, [decision_string])
     if constants.SWITCH_STRING in choice:
         battle.user.last_used_move = LastUsedMove(battle.user.active.name, "switch {}".format(choice.split()[-1]), battle.turn)
     else:
@@ -50,7 +51,7 @@ async def handle_team_preview(battle, ps_websocket_client):
     battle_copy.user.active = Pokemon.get_dummy()
     battle_copy.opponent.active = Pokemon.get_dummy()
 
-    best_move = await async_pick_move(battle_copy)
+    best_move = await async_pick_move(battle_copy, ps_websocket_client)
     size_of_team = len(battle.user.reserve) + 1
     team_list_indexes = list(range(1, size_of_team))
     choice_digit = int(best_move[0].split()[-1])
@@ -109,7 +110,7 @@ async def read_messages_until_first_pokemon_is_seen(ps_websocket_client, battle,
                     await async_update_battle(battle, line)
 
             # first move needs to be picked here
-            best_move = await async_pick_move(battle)
+            best_move = await async_pick_move(battle, ps_websocket_client)
             await ps_websocket_client.send_message(battle.battle_tag, best_move)
 
             return
@@ -172,7 +173,7 @@ async def start_battle(ps_websocket_client, pokemon_battle_type):
         battle = await start_standard_battle(ps_websocket_client, pokemon_battle_type)
 
     await ps_websocket_client.send_message(battle.battle_tag, ["hf"])
-    await ps_websocket_client.send_message(battle.battle_tag, ['/timer on'])
+    await ps_websocket_client.send_message(battle.battle_tag, ['/timer off'])
 
     return battle
 
@@ -193,5 +194,5 @@ async def pokemon_battle(ps_websocket_client, pokemon_battle_type):
         else:
             action_required = await async_update_battle(battle, msg)
             if action_required and not battle.wait:
-                best_move = await async_pick_move(battle)
+                best_move = await async_pick_move(battle, ps_websocket_client)
                 await ps_websocket_client.send_message(battle.battle_tag, best_move)
