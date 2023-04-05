@@ -119,12 +119,12 @@ class PSWebsocketClient:
         await self.send_message('', message)
         self.last_challenge_time = time.time()
 
-    async def accept_challenge(self, battle_format, team, room_name):
+    async def accept_challenge(self, team, room_name):
         if room_name is not None:
             await self.join_room(room_name)
 
-        logger.debug("Waiting for a {} challenge".format(battle_format))
-        await self.update_team(battle_format, team)
+        logger.debug("Waiting for a challenge")
+        
         username = None
         while username is None:
             msg = await self.receive_message()
@@ -133,13 +133,15 @@ class PSWebsocketClient:
                 len(split_msg) == 9 and
                 split_msg[1] == "pm" and
                 split_msg[3].strip().replace("!", "").replace("‽", "") == self.username and
-                split_msg[4].startswith("/challenge") and
-                split_msg[5] == battle_format
+                split_msg[4].startswith("/challenge")
             ):
                 username = split_msg[2].strip()
-
+        
+        battle_format = split_msg[5]
         message = ["/accept " + username]
+        await self.update_team(battle_format, team)
         await self.send_message('', message)
+        return battle_format
 
     async def search_for_match(self, battle_format, team):
         logger.debug("Searching for ranked {} match".format(battle_format))
