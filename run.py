@@ -74,8 +74,7 @@ async def showdown():
                 team
             )
         elif ShowdownConfig.bot_mode == constants.ACCEPT_CHALLENGE:
-            await ps_websocket_client.accept_challenge(
-                ShowdownConfig.pokemon_mode,
+            ShowdownConfig.pokemon_mode = await ps_websocket_client.accept_challenge(
                 team,
                 ShowdownConfig.room_name
             )
