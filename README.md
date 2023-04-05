@@ -1,7 +1,9 @@
 # Showdown  ![umbreon](https://play.pokemonshowdown.com/sprites/xyani/umbreon.gif)
 A Pokémon battle-bot that can play battles on [Pokemon Showdown](https://pokemonshowdown.com/).
 
-The bot can play single battles in generations 3 through 9.
+The bot can play single battles in generations 3 through 9. 
+
+My edits after forking allows the human user to challenge the bot in a battle format specified in the Showdown Web UI directly. That means you don't need to edit the env file if you want to battle it in a different format than last time.
 
 ![badge](https://github.com/pmariglia/showdown/actions/workflows/pythonapp.yml/badge.svg)
 
